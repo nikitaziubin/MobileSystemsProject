@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.greetingcard.network.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [SignalMapEntity::class, UserSignalEntity::class], version = 2, exportSchema = false)
+@Database(entities = [SignalMapEntity::class, UserSignalEntity::class, MapSize::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appDao(): AppDao
 
@@ -24,48 +24,56 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "location_database"
                 )
-                .fallbackToDestructiveMigration()
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        INSTANCE?.let { database ->
-                            CoroutineScope(Dispatchers.IO).launch {
-                                try {
-                                    populateInitialData(database.appDao())
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        }
-                    }
-                })
-                .build()
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val dao = instance.appDao()
+                        val apiService = ApiService.create()
+                        val mapSize = apiService.getMapSize()
+                        dao.insertMapSize(MapSize(
+                            minX =  mapSize.minX,
+                            minY = mapSize.minY,
+                            maxX = mapSize.maxX,
+                            maxY = mapSize.maxY
+                        ))
+
+                        for(i in mapSize.minX..mapSize.maxX){
+                            val xThSignalMapCell = apiService.getMapColumn(i)
+                            for(mapCell in xThSignalMapCell){
+                                dao.insertMapCell(SignalMapEntity(
+                                    x = mapCell.x,
+                                    y = mapCell.y,
+                                    strength1 = mapCell.strength1,
+                                    strength2 = mapCell.strength2,
+                                    strength3 = mapCell.strength3
+                                ))
+                            }
+
+                        }
+
+                        val testUsers = apiService.getTestUsers()
+                        for (user in testUsers) {
+                            dao.insertUser(
+                                UserSignalEntity(
+                                    mac = user.mac,
+                                    sensor = user.sensor,
+                                    stiprumas = user.stiprumas,
+                                    estimatedX = user.estimatedX,
+                                    estimatedY = user.estimatedY
+                                )
+                            )
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
                 instance
             }
-        }
-
-        private suspend fun populateInitialData(dao: AppDao) {
-            val mapList = mutableListOf<SignalMapEntity>()
-            for (y in -11..19) {
-                for (x in -5..6) {
-                    val trained = (x == 1 || x == 2) && (y % 2 == 0)
-                    mapList.add(
-                        SignalMapEntity(
-                            x = x,
-                            y = y,
-                            isTrained = trained,
-                            apName = "seklys_drone",
-                            strength = if (trained) -50 else -90
-                        )
-                    )
-                }
-            }
-            dao.insertMap(mapList)
-
-            dao.insertUser(UserSignalEntity(mac = "AA:BB:CC:DD:EE:FF", sensor = "seklys_drone", stiprumas = -52, estimatedX = 1, estimatedY = 17))
-            dao.insertUser(UserSignalEntity(mac = "11:22:33:44:55:66", sensor = "seklys_drone", stiprumas = -65, estimatedX = 2, estimatedY = 8))
         }
     }
 }

@@ -33,12 +33,12 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
     var sensorInput by remember { mutableStateOf("seklys_drone") }
     var strengthInput by remember { mutableStateOf("-55") }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)){
-        Button(onClick = onNavigate, modifier = Modifier.fillMaxWidth()){
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Button(onClick = onNavigate, modifier = Modifier.fillMaxWidth()) {
             Text("Back to Map Grid Page")
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Add Device Signal and Determine Location", style = MaterialTheme.typography.titleMedium)
+        Text("Add Device Signal & Determine Location", style = MaterialTheme.typography.titleMedium)
 
         OutlinedTextField(
             value = macInput,
@@ -50,7 +50,7 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
         OutlinedTextField(
             value = sensorInput,
             onValueChange = { sensorInput = it },
-            label = { Text("Sensor Name") },
+            label = { Text("Access Point / Sensor Name") },
             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
         )
 
@@ -63,7 +63,7 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
 
         Button(
             onClick = {
-                if (macInput.isNotBlank()){
+                if (macInput.isNotBlank()) {
                     viewModel.addOrUpdateUserLocation(
                         mac = macInput,
                         sensor = sensorInput,
@@ -74,21 +74,21 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
             },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
         ) {
-            Text("Calculate Location and Saved")
+            Text("Calculate Location and Save")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Register Users / Signal Records", style = MaterialTheme.typography.titleMedium)
+        Text("Registered Users / Signal Records (vartotojai)", style = MaterialTheme.typography.titleMedium)
 
         LazyColumn(modifier = Modifier.fillMaxSize().weight(1f)) {
             items(users) { user ->
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                ){
+                ) {
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(text = "MAC: ${user.mac}", color = Color.Black)
                         Text(text = "Sensor: ${user.sensor} | Strength: ${user.stiprumas} dBm", fontSize = 12.sp)
-                        Text(text = "Estimated Pos: X=${user.estimatedX}, Y=${user.estimatedY}", fontSize = 12.sp, color = Color.Blue)
+                        Text(text = "Estimated Position: X = ${user.estimatedX}, Y = ${user.estimatedY}", fontSize = 12.sp, color = Color.Blue)
                     }
                 }
             }

@@ -13,11 +13,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.greetingcard.viewmodel.LocationViewModel
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+class MainActivity : ComponentActivity(){
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
-        val viewModel = LocationViewModel(application)
 
+//        Thread{
+//            val db = AppDatabase.getDataBase(this)
+//            db.clearAllTables()
+//        }.start()
+
+        val viewModel = LocationViewModel(application)
         setContent {
             MaterialTheme(colorScheme = lightColorScheme()) {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -26,16 +31,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun SimpleApp(viewModel: LocationViewModel){
-    var isTableScreen by remember { mutableStateOf(true) }
-
-    if(isTableScreen){
-        TableScreen(viewModel = viewModel, onNavigate = { isTableScreen = false })
-    }
-    else{
-        DynamicListScreen(viewModel = viewModel,  onNavigate = { isTableScreen = true })
+    @Composable
+    fun SimpleApp(viewModel: LocationViewModel){
+        var isTableScreen by remember { mutableStateOf(true) }
+        if(isTableScreen){
+            TableScreen(viewModel = viewModel, onNavigate = { isTableScreen = false})
+        }else{
+            DynamicListScreen(viewModel = viewModel, onNavigate = { isTableScreen = true})
+        }
     }
 }

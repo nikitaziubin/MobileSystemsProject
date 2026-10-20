@@ -25,42 +25,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.greetingcard.viewmodel.LocationViewModel
 
-val DarkGray = Color(0xFF444444)
+val DarkGrey = Color(0xFF444444)
 
 @Composable
-fun TableScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
+fun TableScreen(viewModel: LocationViewModel, onNavigate: () -> Unit){
     val signalMap by viewModel.signalMap.collectAsState()
     val users by viewModel.users.collectAsState()
+    val mapSize by viewModel.mapSize.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Button(
             onClick = onNavigate,
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         ) {
-            Text("Go to Add Device / Signal List")
+            Text("Go to Signal List")
         }
-
-        Text("Measurement Points Grid (Map)", style = MaterialTheme.typography.titleMedium )
+        Text("Measurement Point Grid (Map)", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
 
+        val currentMapSize = mapSize
         LazyColumn(modifier = Modifier.fillMaxSize().weight(1f)) {
-            items((-11..19).reversed().toList()){ rowIndex ->
+            items((currentMapSize.minY ..currentMapSize.maxY).reversed().toList()){ rowIndex ->
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
-                    items(12) { colIndex ->
-                        val currentX = colIndex - 5
-                        val mapCell = signalMap.find { it.x == currentX && it.y == rowIndex}
-                        val isUserHere = users.any { it.estimatedX == currentX && it.estimatedY == rowIndex}
+                    items((currentMapSize.minX..currentMapSize.maxX).toList()) { colIndex ->
+
+                        val mapCell = signalMap.find { it.x == colIndex && it.y == rowIndex}
+                        val isUserHere = users.any {it.estimatedX == colIndex && it.estimatedY == rowIndex}
 
                         val cellText = when {
                             isUserHere -> "U"
-                            mapCell?.isTrained == true -> "1"
+                            mapCell != null -> "1"
                             else -> "0"
                         }
                         val cellBg = when {
                             isUserHere -> Color.Red
-                            mapCell?.isTrained == true -> Color.Green
+                            mapCell != null -> Color.Green
                             else -> Color.LightGray
                         }
+
                         Text(
                             text = cellText,
                             color = Color.Black,
@@ -69,7 +71,7 @@ fun TableScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
                             modifier = Modifier
                                 .width(27.9.dp)
                                 .background(cellBg)
-                                .border(0.5.dp, DarkGray)
+                                .border(0.5.dp, DarkGrey)
                                 .padding(2.dp),
                             textAlign = TextAlign.Center
                         )
@@ -77,5 +79,6 @@ fun TableScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
                 }
             }
         }
+
     }
 }

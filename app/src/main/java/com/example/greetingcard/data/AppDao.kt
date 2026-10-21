@@ -14,11 +14,11 @@ interface AppDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMapCell(map: SignalMapEntity)
 
-    @Query("SELECT * FROM vartotojai")
-    fun getUsers(): Flow<List<UserSignalEntity>>
+    @Query("SELECT * FROM signals_for_user_location_findings")
+    fun getSignalsForUserLocationFindings(): Flow<List<SignalsForUserLocationFindings>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: UserSignalEntity)
+    suspend fun insertSignalsForUserLocationFindings(user: SignalsForUserLocationFindings)
 
     @Query("SELECT * FROM map_size WHERE id = 1")
     fun getMapSize(): Flow<MapSize>

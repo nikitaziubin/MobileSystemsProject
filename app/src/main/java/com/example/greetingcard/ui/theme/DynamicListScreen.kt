@@ -29,9 +29,10 @@ import com.example.greetingcard.viewmodel.LocationViewModel
 fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
     val users by viewModel.users.collectAsState()
 
-    var macInput by remember { mutableStateOf("") }
-    var sensorInput by remember { mutableStateOf("seklys_drone") }
-    var strengthInput by remember { mutableStateOf("-55") }
+    var macInput by remember { mutableStateOf("01:23:45:67:89:AB") }
+    var strength1Input by remember { mutableStateOf("1") }
+    var strength2Input by remember { mutableStateOf("2") }
+    var strength3Input by remember { mutableStateOf("3") }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Button(onClick = onNavigate, modifier = Modifier.fillMaxWidth()) {
@@ -48,16 +49,23 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
         )
 
         OutlinedTextField(
-            value = sensorInput,
-            onValueChange = { sensorInput = it },
-            label = { Text("Access Point / Sensor Name") },
+            value = strength1Input,
+            onValueChange = { strength1Input = it },
+            label = { Text("Strength 1 input") },
             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
         )
 
         OutlinedTextField(
-            value = strengthInput,
-            onValueChange = { strengthInput = it },
-            label = { Text("Signal Strength (dBm)") },
+            value = strength2Input,
+            onValueChange = { strength2Input = it },
+            label = { Text("Strength 2 input") },
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+        )
+
+        OutlinedTextField(
+            value = strength3Input,
+            onValueChange = { strength3Input = it },
+            label = { Text("Strength 3 input") },
             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
         )
 
@@ -66,10 +74,10 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
                 if (macInput.isNotBlank()) {
                     viewModel.addOrUpdateUserLocation(
                         mac = macInput,
-                        sensor = sensorInput,
-                        strength = strengthInput.toIntOrNull() ?: -60
+                        strength1 = strength1Input.toInt(),
+                        strength2 = strength2Input.toInt(),
+                        strength3 = strength3Input.toInt(),
                     )
-                    macInput = ""
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
@@ -78,7 +86,7 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Registered Users / Signal Records (vartotojai)", style = MaterialTheme.typography.titleMedium)
+        Text("Signal strengths", style = MaterialTheme.typography.titleMedium)
 
         LazyColumn(modifier = Modifier.fillMaxSize().weight(1f)) {
             items(users) { user ->
@@ -87,8 +95,7 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
                 ) {
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(text = "MAC: ${user.mac}", color = Color.Black)
-                        Text(text = "Sensor: ${user.sensor} | Strength: ${user.stiprumas} dBm", fontSize = 12.sp)
-                        Text(text = "Estimated Position: X = ${user.estimatedX}, Y = ${user.estimatedY}", fontSize = 12.sp, color = Color.Blue)
+                        Text(text = "Strength1: ${user.strength1} | Strength2: ${user.strength2} | Strength3: ${user.strength3}", fontSize = 14.sp)
                     }
                 }
             }

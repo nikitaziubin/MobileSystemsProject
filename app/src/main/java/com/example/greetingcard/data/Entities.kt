@@ -4,9 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "signal_map")
+@Entity(tableName = "signal_map", primaryKeys = ["x", "y"])
 data class SignalMapEntity(
-    @PrimaryKey(autoGenerate = true) val id : Long = 0,
     val x: Int,
     val y: Int,
     val strength1: Int,
@@ -15,13 +14,12 @@ data class SignalMapEntity(
 
 )
 
-@Entity(tableName = "vartotojai")
-data class UserSignalEntity(
+@Entity(tableName = "signals_for_user_location_findings")
+data class SignalsForUserLocationFindings(
     @PrimaryKey val mac : String,
-    val sensor: String,
-    val stiprumas: Int,
-    val estimatedX: Int,
-    val estimatedY: Int
+    val strength1: Int,
+    val strength2: Int,
+    val strength3: Int
 )
 
 @Entity(tableName = "map_size")

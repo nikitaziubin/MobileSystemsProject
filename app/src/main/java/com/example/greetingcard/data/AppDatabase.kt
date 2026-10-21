@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [SignalMapEntity::class, UserSignalEntity::class, MapSize::class], version = 5, exportSchema = false)
+@Database(entities = [SignalMapEntity::class, SignalsForUserLocationFindings::class, MapSize::class], version = 11, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appDao(): AppDao
 
@@ -52,18 +52,16 @@ abstract class AppDatabase : RoomDatabase() {
                                     strength3 = mapCell.strength3
                                 ))
                             }
-
                         }
 
-                        val testUsers = apiService.getTestUsers()
-                        for (user in testUsers) {
-                            dao.insertUser(
-                                UserSignalEntity(
-                                    mac = user.mac,
-                                    sensor = user.sensor,
-                                    stiprumas = user.stiprumas,
-                                    estimatedX = user.estimatedX,
-                                    estimatedY = user.estimatedY
+                        val signalsForFindings = apiService.getRemoteSignal()
+                        for (signal in signalsForFindings) {
+                            dao.insertSignalsForUserLocationFindings(
+                                SignalsForUserLocationFindings(
+                                    mac = signal.mac,
+                                    strength1 = signal.strength1,
+                                    strength2 = signal.strength2,
+                                    strength3 = signal.strength3,
                                 )
                             )
                         }

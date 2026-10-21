@@ -50,15 +50,15 @@ fun TableScreen(viewModel: LocationViewModel, onNavigate: () -> Unit){
                     items((currentMapSize.minX..currentMapSize.maxX).toList()) { colIndex ->
 
                         val mapCell = signalMap.find { it.x == colIndex && it.y == rowIndex}
-                        val isUserHere = users.any {it.estimatedX == colIndex && it.estimatedY == rowIndex}
+                        //val isUserHere = users.any {it.estimatedX == colIndex && it.estimatedY == rowIndex}
 
                         val cellText = when {
-                            isUserHere -> "U"
+                          //  isUserHere -> "U"
                             mapCell != null -> "1"
                             else -> "0"
                         }
                         val cellBg = when {
-                            isUserHere -> Color.Red
+                            //isUserHere -> Color.Red
                             mapCell != null -> Color.Green
                             else -> Color.LightGray
                         }

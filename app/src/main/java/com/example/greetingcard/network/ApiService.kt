@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 data class RemoteMapCell(val x: Int, val y: Int, val strength1: Int, val strength2: Int, val strength3: Int)
-data class RemoteUser(val mac: String, val sensor: String, val stiprumas: Int, val estimatedX: Int, val estimatedY: Int)
+data class RemoteSignal(val mac: String, val strength1: Int, val strength2: Int, val strength3: Int)
 
 data class RemoteMapSize(val minX: Int, val minY : Int, val maxX: Int, val maxY: Int)
 
@@ -17,8 +17,8 @@ interface ApiService {
     @GET("map-size")
     suspend fun getMapSize(): RemoteMapSize
 
-    @GET("test-users")
-    suspend fun getTestUsers(): List<RemoteUser>
+    @GET("test-users-agg")
+    suspend fun getRemoteSignal(): List<RemoteSignal>
 
     companion object {
         const val BASE_URL = "http://192.168.137.1:9000/"

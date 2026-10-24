@@ -1,5 +1,6 @@
 package com.example.greetingcard.ui.theme
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -91,7 +92,13 @@ fun DynamicListScreen(viewModel: LocationViewModel, onNavigate: () -> Unit) {
         LazyColumn(modifier = Modifier.fillMaxSize().weight(1f)) {
             items(users) { user ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clickable{
+                            viewModel.calculateAndHighlightLocation(user)
+                            onNavigate()
+                        }
                 ) {
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(text = "MAC: ${user.mac}", color = Color.Black)

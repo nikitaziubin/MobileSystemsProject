@@ -17,11 +17,6 @@ class MainActivity : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
 
-//        Thread{
-//            val db = AppDatabase.getDataBase(this)
-//            db.clearAllTables()
-//        }.start()
-
         val viewModel = LocationViewModel(application)
         setContent {
             MaterialTheme(colorScheme = lightColorScheme()) {
